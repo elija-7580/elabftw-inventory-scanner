@@ -1,0 +1,6 @@
+Product,Supplier,Cat No,CAS,Code
+Alpha,Acme,A-1,,CODE001
+Alpha Dup,Acme,A-1,,CODE002
+Beta,Acme,B-1,,CODE001
+,,,,
+Gamma,,,,

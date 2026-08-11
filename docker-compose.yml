@@ -1,0 +1,30 @@
+services:
+  inventory-scanner:
+    build:
+      context: .
+      args:
+        GIT_COMMIT: ${SCANNER_GIT_COMMIT:-unknown}
+    image: inventory-scanner:staging
+    container_name: inventory-scanner
+    restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 128m
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+    environment:
+      SCANNER_WEB_DIR: /app/web/dist
+      SCANNER_URL_PREFIX: /scanner
+    networks:
+      - elabftw-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8020/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+networks:
+  elabftw-net:
+    external: true
+    name: elabftw_elabftw-net

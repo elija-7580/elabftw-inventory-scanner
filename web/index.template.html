@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en" data-scanner-api-base="/scanner">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Inventory Scanner for eLabFTW</title>
+  <style>
+    :root {
+      --canvas: #FFFFFF;
+      --surface-soft: #F7F7F6;
+      --surface-secondary: #EFEFEE;
+      --text: #1F1F1F;
+      --text-secondary: #6F6F6B;
+      --border: #DEDEDA;
+      --action: #1F1F1F;
+      --action-text: #FFFFFF;
+      --accent: #FF9C1B;
+      --success: #237A4B;
+      --warning: #A86200;
+      --error: #C9372C;
+      --info: #246BCE;
+      --radius: 8px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --space-6: 32px;
+      --space-7: 48px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --focus: 0 0 0 3px rgba(36, 107, 206, 0.28);
+      --max-width: 960px;
+      --header-h: 56px;
+      --nav-h: 48px;
+      --sticky-h: 72px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--canvas);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    .app-shell {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: var(--canvas);
+    }
+    .app-shell::before {
+      content: "";
+      display: block;
+      height: 3px;
+      background: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      min-height: var(--header-h);
+      padding: var(--space-3) var(--space-4);
+      padding-left: max(var(--space-4), env(safe-area-inset-left));
+      padding-right: max(var(--space-4), env(safe-area-inset-right));
+      border-bottom: 1px solid var(--border);
+      background: var(--canvas);
+    }
+    @media (min-width: 768px) {
+      .site-header { padding-left: var(--space-6); padding-right: var(--space-6); }
+    }
+    .brand { min-width: 0; flex: 1; }
+    .brand-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media (max-width: 420px) {
+      .brand-title { font-size: 15px; }
+      .brand-sub { display: none; }
+      .user-chip { display: none; }
+      .link-quiet[href="/inventory.php"] { display: none; }
+    }
+    .brand-sub {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-shrink: 0;
+    }
+    .user-chip {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .link-quiet {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 var(--space-2);
+    }
+    .link-quiet:hover { text-decoration: underline; }
+    .link-quiet:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
+
+    .readonly-bar {
+      display: none;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background: var(--surface-soft);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    .readonly-bar.visible { display: flex; }
+    .readonly-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warning);
+      flex-shrink: 0;
+    }
+
+    .app-nav {
+      display: flex;
+      gap: var(--space-1);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-bottom: 1px solid var(--border);
+      padding: 0 var(--space-4);
+      padding-left: max(var(--space-4), env(safe-area-inset-left));
+      padding-right: max(var(--space-4), env(safe-area-inset-right));
+      background: var(--canvas);
+      scrollbar-width: none;
+    }
+    .app-nav::-webkit-scrollbar { display: none; }
+    @media (min-width: 768px) {
+      .app-nav { padding-left: var(--space-6); padding-right: var(--space-6); }
+    }
+    .nav-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: 44px;
+      padding: 0 var(--space-3);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+      border-radius: 0;
+      width: auto;
+    }
+    .nav-btn[aria-current="page"] {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+    .nav-btn:focus-visible { outline: none; box-shadow: var(--focus); }
+
+    .app-main {
+      flex: 1;
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--space-5) var(--space-4);
+      padding-left: max(var(--space-4), env(safe-area-inset-left));
+      padding-right: max(var(--space-4), env(safe-area-inset-right));
+      padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom));
+    }
+    @media (min-width: 768px) {
+      .app-main { padding-left: var(--space-6); padding-right: var(--space-6); }
+    }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .page-title {
+      margin: 0 0 var(--space-2);
+      font-size: 22px;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+    .page-lead {
+      margin: 0 0 var(--space-5);
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+    .section {
+      margin: 0 0 var(--space-5);
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--canvas);
+    }
+    .section-title {
+      margin: 0 0 var(--space-3);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .section-soft { background: var(--surface-soft); }
+    .utility-section {
+      margin-top: var(--space-6);
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--border);
+    }
+
+    .action-list { display: grid; gap: var(--space-3); }
+    .action-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-1);
+      width: 100%;
+      text-align: left;
+      min-height: 72px;
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--canvas);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+    }
+    .action-row:hover { background: var(--surface-soft); }
+    .action-row:focus-visible { outline: none; box-shadow: var(--focus); }
+    .action-row strong { font-size: 16px; font-weight: 650; }
+    .action-row span { color: var(--text-secondary); font-size: 14px; }
+    .action-row.secondary-action {
+      min-height: 56px;
+      background: var(--surface-soft);
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 var(--space-2);
+      color: var(--text);
+    }
+    .req::after { content: " *"; color: var(--error); font-weight: 700; }
+    .field { margin-bottom: var(--space-4); }
+    .field:last-child { margin-bottom: 0; }
+    .field-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+    @media (min-width: 640px) {
+      .field-grid.two { grid-template-columns: 1fr 1fr; }
+    }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font: inherit;
+      font-size: 16px;
+      color: var(--text);
+      background: var(--canvas);
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+      border-color: var(--info);
+    }
+    input.code-mono, .code-mono {
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 0.01em;
+    }
+    .hint {
+      margin: var(--space-2) 0 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .field-source {
+      margin: var(--space-2) 0 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .field-source.match { color: var(--info); }
+    .field-source.conflict { color: var(--warning); }
+    .field-source.manual { color: var(--text-secondary); }
+    .field-source.none { color: var(--text-secondary); }
+    .field-touched { box-shadow: inset 3px 0 0 var(--accent); }
+
+    .btn-row { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
+    @media (min-width: 480px) {
+      .btn-row.two { grid-template-columns: 1fr 1fr; }
+    }
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 16px;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      border: 1px solid var(--action);
+      background: var(--action);
+      color: var(--action-text);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    button[hidden], .btn[hidden], [hidden] {
+      display: none !important;
+    }
+    button.secondary, .btn.secondary {
+      background: var(--canvas);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    button.ghost, .btn.ghost {
+      background: transparent;
+      color: var(--text);
+      border-color: transparent;
+    }
+    button:disabled, .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    button.danger-quiet {
+      background: var(--canvas);
+      color: var(--error);
+      border-color: var(--border);
+    }
+
+    .status {
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      margin: var(--space-4) 0;
+      font-size: 14px;
+    }
+    .status[hidden] { display: none; }
+    .status-mark {
+      flex: 0 0 auto;
+      width: 8px;
+      height: 8px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+    }
+    .status.ok .status-mark { background: var(--success); }
+    .status.warn .status-mark { background: var(--warning); }
+    .status.err .status-mark { background: var(--error); }
+    .status.info .status-mark { background: var(--info); }
+    .status-title { margin: 0; font-weight: 650; color: var(--text); }
+    .status-body { margin: 2px 0 0; color: var(--text-secondary); }
+
+    .context-chip {
+      display: inline-block;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--text-secondary);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 14px;
+      margin: 0 var(--space-2) var(--space-2) 0;
+    }
+
+    .scan-panel {
+      margin: 0 0 var(--space-5);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #111;
+    }
+    .scan-instruction {
+      margin: 0;
+      padding: var(--space-3) var(--space-4);
+      background: var(--surface-soft);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    .video-wrap {
+      position: relative;
+      background: #111;
+      aspect-ratio: 3 / 4;
+      max-height: 56vh;
+    }
+    @media (min-width: 768px) {
+      .video-wrap { aspect-ratio: 16 / 10; max-height: 420px; }
+    }
+    video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #111;
+    }
+    .scan-guide {
+      pointer-events: none;
+      position: absolute;
+      inset: 18% 14%;
+      border: 1.5px solid rgba(255, 255, 255, 0.92);
+      border-radius: 6px;
+      box-shadow: none;
+    }
+    .scan-guide::before,
+    .scan-guide::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--accent);
+    }
+    .scan-guide::before {
+      top: -1px; left: -1px;
+      border-right: 0; border-bottom: 0;
+    }
+    .scan-guide::after {
+      right: -1px; bottom: -1px;
+      border-left: 0; border-top: 0;
+    }
+    .scan-toolbar {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+      background: #161616;
+      color: #fff;
+    }
+    .scan-status {
+      margin: 0;
+      font-size: 14px;
+      color: rgba(255,255,255,0.82);
+      min-height: 1.25em;
+    }
+    .scan-status.err { color: #ffb4ae; }
+    .scan-detected, .scan-symbology {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(255,255,255,0.72);
+      word-break: break-all;
+    }
+    .scan-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: center;
+    }
+    .scan-controls[hidden] { display: none; }
+    .scan-control-label {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      margin: 0;
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      min-width: 120px;
+      flex: 1;
+    }
+    .scan-controls input[type="range"] { width: 100%; min-height: 44px; }
+    .scan-controls button {
+      width: auto;
+      min-width: 88px;
+      background: #2a2a2a;
+      border-color: #3a3a3a;
+      color: #fff;
+    }
+    .scan-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    .scan-debug {
+      margin: 0;
+      padding: var(--space-3);
+      font-family: var(--mono);
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #0d0d0d;
+      color: #cfcfcf;
+      border-top: 1px solid #2a2a2a;
+    }
+    .scan-debug[hidden] { display: none; }
+
+    .form-section + .form-section { margin-top: var(--space-5); }
+    .pack-lines { display: grid; gap: var(--space-3); margin: var(--space-3) 0; }
+    .pack-line {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      background: var(--surface-soft);
+    }
+    .pack-line-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .pack-line-grid {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 420px) {
+      .pack-line-grid { grid-template-columns: 1fr; }
+    }
+    button.pack-remove {
+      width: auto;
+      min-height: 44px;
+      padding: 0 var(--space-3);
+      background: var(--canvas);
+      color: var(--error);
+      border-color: var(--border);
+      font-size: 14px;
+    }
+    fieldset {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      min-width: 0;
+    }
+    legend {
+      padding: 0;
+      margin: 0 0 var(--space-2);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .sticky-actions {
+      position: relative;
+      margin-top: var(--space-5);
+      padding: var(--space-3) 0;
+      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+      background: var(--canvas);
+      border-top: 1px solid var(--border);
+      z-index: 5;
+    }
+    @media (min-width: 640px) {
+      .sticky-actions {
+        position: sticky;
+        bottom: 0;
+        background: rgba(255,255,255,0.96);
+      }
+    }
+
+    .steps {
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      margin: 0 0 var(--space-5);
+      padding-bottom: var(--space-1);
+    }
+    .step-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-height: 36px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      background: var(--canvas);
+    }
+    .step-pill[aria-current="step"] {
+      color: var(--text);
+      border-color: var(--text);
+      box-shadow: inset 0 -2px 0 var(--accent);
+    }
+    .step-pill .n {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-secondary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .import-panel[hidden] { display: none; }
+    .dropzone {
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+      background: var(--surface-soft);
+      text-align: center;
+    }
+    .dropzone strong { display: block; margin-bottom: var(--space-2); }
+    .mapping-grid {
+      display: grid;
+      gap: var(--space-3);
+    }
+    .mapping-row {
+      display: grid;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+    }
+    @media (min-width: 720px) {
+      .mapping-row {
+        grid-template-columns: 180px 1fr;
+        align-items: center;
+      }
+      .mapping-row label { margin: 0; }
+    }
+    .import-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .stat {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      background: var(--canvas);
+    }
+    .stat strong { display: block; font-size: 20px; }
+    .stat span { font-size: 14px; color: var(--text-secondary); }
+
+    .product-summary {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      background: var(--surface-soft);
+      margin: var(--space-4) 0;
+    }
+    .product-summary h3 { margin: 0 0 var(--space-2); font-size: 18px; }
+    .product-summary .meta { margin: 0; color: var(--text-secondary); font-size: 14px; }
+    .product-summary .path { margin: var(--space-2) 0 0; font-size: 14px; }
+    .empty-state {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+      background: var(--surface-soft);
+      text-align: left;
+    }
+    .empty-state h3 { margin: 0 0 var(--space-2); font-size: 16px; }
+    .empty-state p { margin: 0 0 var(--space-4); color: var(--text-secondary); }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .check-row input {
+      width: 20px;
+      min-height: 20px;
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+
+    pre.result {
+      margin: 0;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .footer-note {
+      margin-top: var(--space-5);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    #scanner-retry { margin-top: var(--space-4); }
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="brand">
+        <p class="brand-title">Inventory Scanner for eLabFTW</p>
+        <p class="brand-sub">Inventory Scanner</p>
+      </div>
+      <div class="header-meta">
+        <span class="user-chip" id="user-chip" hidden></span>
+        <a class="link-quiet" href="/inventory.php">eLabFTW</a>
+        <a class="link-quiet" href="auth/logout">Log out</a>
+      </div>
+    </header>
+
+    <div id="readonly-bar" class="readonly-bar" role="status" aria-live="polite">
+      <span class="readonly-dot" aria-hidden="true"></span>
+      <span>Read-only test mode</span>
+    </div>
+
+    <nav class="app-nav" aria-label="Primary">
+      <button type="button" class="nav-btn" id="nav-home" data-nav="home" aria-current="page">Home</button>
+      <button type="button" class="nav-btn" id="nav-register" data-nav="register">Register</button>
+      <button type="button" class="nav-btn" id="nav-manage" data-nav="manage">Manage</button>
+      <button type="button" class="nav-btn" id="nav-catalog" data-nav="catalog-import">Catalog</button>
+    </nav>
+
+    <main class="app-main">
+      <div id="status-banner" class="status warn" hidden>
+        <span class="status-mark" aria-hidden="true"></span>
+        <div>
+          <p class="status-title" id="status-banner-title"></p>
+          <p class="status-body" id="status-banner-body"></p>
+        </div>
+      </div>
+
+      <div id="home" class="view active">
+        <h1 class="page-title">Inventory</h1>
+        <p class="page-lead">Scan a product to register it or manage existing stock.</p>
+
+        <div class="action-list" aria-label="Primary workflows">
+          <button type="button" class="action-row" id="btn-register">
+            <strong>Register new product</strong>
+            <span>Scan a supplier code and create an item with containers.</span>
+          </button>
+          <button type="button" class="action-row" id="btn-manage">
+            <strong>Manage existing stock</strong>
+            <span>Scan a container QR to adjust quantity or details.</span>
+          </button>
+        </div>
+
+        <div class="section section-soft" style="margin-top:24px">
+          <h2 class="section-title">Optional context</h2>
+          <p class="hint" style="margin-top:0">Pre-select location and category. You can change these later.</p>
+          <div id="ctx-location-parent-wrap" class="field" hidden>
+            <label for="ctx-location-parent">Room / zone</label>
+            <select id="ctx-location-parent"></select>
+          </div>
+          <div class="field">
+            <label for="ctx-location">Storage location</label>
+            <select id="ctx-location"><option value="">— No default location —</option></select>
+          </div>
+          <div class="field">
+            <label for="ctx-category">Resource category</label>
+            <select id="ctx-category"><option value="">— Default category —</option></select>
+          </div>
+        </div>
+
+        <div class="utility-section">
+          <h2 class="section-title">Catalog management</h2>
+          <button type="button" class="action-row secondary-action" id="btn-catalog-import">
+            <strong>Catalog import</strong>
+            <span>Upload CSV/XLSX for local product lookup (admin).</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="context" class="view">
+        <h1 class="page-title">Set context</h1>
+        <p class="page-lead">Optional. Skip to start scanning immediately.</p>
+        <div class="section">
+          <div class="btn-row two">
+            <button type="button" class="secondary" id="ctx-skip">Skip &amp; scan now</button>
+            <button type="button" id="ctx-continue">Continue</button>
+          </div>
+          <button type="button" class="ghost" data-back style="margin-top:12px">Back</button>
+        </div>
+      </div>
+
+      <section id="register" class="view">
+        <h1 class="page-title">Register</h1>
+        <p class="page-lead">Hold the code inside the frame, then review product details.</p>
+        <div id="reg-context-summary"></div>
+
+        <div class="scan-panel" id="reg-scan-panel">
+          <p class="scan-instruction">Hold the code inside the frame.</p>
+          <div class="video-wrap">
+            <video id="reg-video" playsinline muted></video>
+            <div class="scan-guide" aria-hidden="true"></div>
+          </div>
+          <div class="scan-toolbar">
+            <p class="scan-status" id="reg-scan-status" role="status" aria-live="polite">Camera inactive</p>
+            <p class="scan-detected" id="reg-scan-detected"></p>
+            <p class="scan-symbology" id="reg-scan-symbology"></p>
+            <div id="reg-scan-controls" class="scan-controls" hidden></div>
+            <div class="scan-actions">
+              <button type="button" id="reg-start-scanner">Start scanner</button>
+              <button type="button" class="secondary" id="reg-stop-scanner" disabled>Stop</button>
+            </div>
+          </div>
+          <pre id="reg-scan-debug" class="scan-debug" hidden></pre>
+        </div>
+
+        <div class="form-section section">
+          <h2 class="section-title">Product</h2>
+          <div class="field">
+            <label class="req" for="reg-raw">Scanned / entered code</label>
+            <input id="reg-raw" class="code-mono" placeholder="EAN, GS1, catalogue no., CAS…" autocomplete="off" />
+          </div>
+          <div class="btn-row two">
+            <button type="button" class="secondary" id="reg-parse">Parse code</button>
+            <button type="button" class="secondary" id="reg-catalog-lookup">Catalog lookup</button>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="secondary" id="reg-lookup">Check eLab duplicates</button>
+          </div>
+          <div id="reg-catalog-status" class="status info" hidden>
+            <span class="status-mark" aria-hidden="true"></span>
+            <div><p class="status-title"></p><p class="status-body"></p></div>
+          </div>
+          <div id="reg-parsed" class="status info" hidden>
+            <span class="status-mark" aria-hidden="true"></span>
+            <div><p class="status-title"></p><p class="status-body"></p></div>
+          </div>
+          <div id="reg-lookup-result" class="status warn" hidden>
+            <span class="status-mark" aria-hidden="true"></span>
+            <div><p class="status-title"></p><p class="status-body"></p></div>
+          </div>
+          <div class="field">
+            <label class="req" for="reg-name">Product name</label>
+            <input id="reg-name" autocomplete="off" data-catalog-field="product_name" />
+            <p class="field-source none" id="reg-name-source"></p>
+          </div>
+          <div class="field-grid two">
+            <div class="field">
+              <label class="req" for="reg-mfg">Manufacturer</label>
+              <input id="reg-mfg" autocomplete="organization" data-catalog-field="manufacturer" />
+              <p class="field-source none" id="reg-mfg-source"></p>
+            </div>
+            <div class="field">
+              <label class="req" for="reg-cat">Catalogue number</label>
+              <input id="reg-cat" autocomplete="off" data-catalog-field="catalog_number" />
+              <p class="field-source none" id="reg-cat-source"></p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="reg-cas">CAS number</label>
+            <input id="reg-cas" autocomplete="off" data-catalog-field="cas_number" />
+            <p class="field-source none" id="reg-cas-source"></p>
+          </div>
+          <div class="field-grid two">
+            <div class="field">
+              <label for="reg-lot">Lot / batch</label>
+              <input id="reg-lot" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="reg-expiry">Expiry date</label>
+              <input id="reg-expiry" type="date" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="req" for="reg-category">Resource category</label>
+            <select id="reg-category"></select>
+          </div>
+          <label class="check-row" for="reg-save-catalog">
+            <input id="reg-save-catalog" type="checkbox" />
+            <span>Also save this product metadata to the local catalog for later scans</span>
+          </label>
+        </div>
+
+        <div class="form-section section">
+          <fieldset id="reg-packs">
+            <legend>Inventory</legend>
+            <p class="hint" style="margin-top:0">Each line becomes one container in eLab.</p>
+            <div id="reg-pack-lines" class="pack-lines"></div>
+            <button type="button" class="secondary" id="reg-pack-add">Add another container</button>
+          </fieldset>
+        </div>
+
+        <div class="form-section section">
+          <h2 class="section-title">Location</h2>
+          <div id="reg-storage-parent-wrap" class="field" hidden>
+            <label for="reg-storage-parent">Room / zone</label>
+            <select id="reg-storage-parent"></select>
+          </div>
+          <div class="field">
+            <label class="req" for="reg-storage">Storage location</label>
+            <select id="reg-storage"></select>
+          </div>
+        </div>
+
+        <div id="reg-result" class="status ok" hidden>
+          <span class="status-mark" aria-hidden="true"></span>
+          <div><p class="status-title"></p><p class="status-body"></p></div>
+        </div>
+
+        <div class="sticky-actions">
+          <p class="hint" id="reg-readonly-hint" hidden>Saving is disabled while the scanner is in read-only test mode.</p>
+          <button type="button" id="reg-confirm">Save product &amp; container</button>
+          <button type="button" class="ghost" data-back style="margin-top:8px">Back to home</button>
+        </div>
+      </section>
+
+      <section id="manage" class="view">
+        <h1 class="page-title">Manage</h1>
+        <p class="page-lead">Scan or enter a container code to update stock.</p>
+        <div id="mgr-context-summary"></div>
+
+        <div class="scan-panel" id="mgr-scan-panel">
+          <p class="scan-instruction">Hold the code inside the frame.</p>
+          <div class="video-wrap">
+            <video id="mgr-video" playsinline muted></video>
+            <div class="scan-guide" aria-hidden="true"></div>
+          </div>
+          <div class="scan-toolbar">
+            <p class="scan-status" id="mgr-scan-status" role="status" aria-live="polite">Camera inactive</p>
+            <p class="scan-detected" id="mgr-scan-detected"></p>
+            <p class="scan-symbology" id="mgr-scan-symbology"></p>
+            <div id="mgr-scan-controls" class="scan-controls" hidden></div>
+            <div class="scan-actions">
+              <button type="button" id="mgr-start-scanner">Start scanner</button>
+              <button type="button" class="secondary" id="mgr-stop-scanner" disabled>Stop</button>
+            </div>
+          </div>
+          <pre id="mgr-scan-debug" class="scan-debug" hidden></pre>
+        </div>
+
+        <div class="section">
+          <div class="field">
+            <label for="mgr-container-id">Container ID or QR content</label>
+            <input id="mgr-container-id" class="code-mono" placeholder="Container ID" inputmode="numeric" autocomplete="off" />
+          </div>
+          <button type="button" class="secondary" id="mgr-load">Load container</button>
+        </div>
+
+        <div id="mgr-empty" class="empty-state">
+          <h3>No container loaded</h3>
+          <p>Scan a container QR or enter its ID, then load details.</p>
+          <button type="button" id="mgr-empty-scan">Scan container</button>
+        </div>
+
+        <div id="mgr-detail" class="product-summary" hidden></div>
+        <div id="mgr-edit" class="section" hidden>
+          <h2 class="section-title">Product details</h2>
+          <div class="field-grid two">
+            <div class="field">
+              <label for="mgr-mfg">Manufacturer</label>
+              <input id="mgr-mfg" />
+            </div>
+            <div class="field">
+              <label for="mgr-catno">Catalogue number</label>
+              <input id="mgr-catno" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="mgr-name">Product name</label>
+            <input id="mgr-name" />
+          </div>
+          <div class="field-grid two">
+            <div class="field">
+              <label for="mgr-lot">Lot / batch</label>
+              <input id="mgr-lot" />
+            </div>
+            <div class="field">
+              <label for="mgr-expiry">Expiry date</label>
+              <input id="mgr-expiry" type="date" />
+            </div>
+          </div>
+          <h2 class="section-title" style="margin-top:24px">Stock actions</h2>
+          <div class="field">
+            <label for="mgr-op">Change quantity in this container</label>
+            <select id="mgr-op">
+              <option value="set_exact">Set exact amount in this container</option>
+              <option value="consume">Consume / decrease</option>
+              <option value="restock">Restock / increase</option>
+              <option value="mark_empty">Mark empty</option>
+            </select>
+          </div>
+          <div class="field-grid two">
+            <div class="field">
+              <label for="mgr-qty">Amount in this container</label>
+              <input id="mgr-qty" type="number" step="any" />
+            </div>
+            <div class="field">
+              <label for="mgr-unit">Unit (must match container)</label>
+              <select id="mgr-unit"><option value="">—</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div id="mgr-result" class="status ok" hidden>
+          <span class="status-mark" aria-hidden="true"></span>
+          <div><p class="status-title"></p><p class="status-body"></p></div>
+        </div>
+
+        <div class="sticky-actions">
+          <p class="hint" id="mgr-readonly-hint" hidden>Saving is disabled while the scanner is in read-only test mode.</p>
+          <button type="button" id="mgr-apply">Save changes</button>
+          <button type="button" class="ghost" data-back style="margin-top:8px">Back to home</button>
+        </div>
+      </section>
+
+      <div id="catalog-import" class="view">
+        <h1 class="page-title">Catalog import</h1>
+        <p class="page-lead">Import local product metadata for scan prefill. Does not create eLab records.</p>
+
+        <div class="steps" role="list" aria-label="Import steps">
+          <div class="step-pill" data-step-indicator="1" aria-current="step" role="listitem"><span class="n">1</span> Upload</div>
+          <div class="step-pill" data-step-indicator="2" role="listitem"><span class="n">2</span> Map</div>
+          <div class="step-pill" data-step-indicator="3" role="listitem"><span class="n">3</span> Preview</div>
+          <div class="step-pill" data-step-indicator="4" role="listitem"><span class="n">4</span> Import</div>
+        </div>
+
+        <div class="import-panel section" data-import-step="1">
+          <h2 class="section-title">Upload</h2>
+          <div class="dropzone">
+            <strong>CSV or XLSX</strong>
+            <p class="hint">Accepted formats: .csv, .xlsx. Maximum size: 5 MiB.</p>
+            <label class="sr-only" for="cat-file">Choose catalog file</label>
+            <input id="cat-file" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+          </div>
+          <div class="field" style="margin-top:16px">
+            <label for="cat-sheet">Sheet (XLSX)</label>
+            <select id="cat-sheet"><option value="">— Auto / first sheet —</option></select>
+          </div>
+        </div>
+
+        <div class="import-panel section" data-import-step="2">
+          <h2 class="section-title">Map columns</h2>
+          <p class="hint">Confirm or remap each field. Remapping is required when headers differ.</p>
+          <div id="cat-mapping" class="mapping-grid"></div>
+        </div>
+
+        <div class="import-panel section" data-import-step="3">
+          <h2 class="section-title">Preview</h2>
+          <p class="hint">Preview never writes to the database.</p>
+          <button type="button" class="secondary" id="cat-preview">Run preview</button>
+          <div id="cat-summary" class="import-summary" hidden></div>
+        </div>
+
+        <div class="import-panel section" data-import-step="4">
+          <h2 class="section-title">Import</h2>
+          <p class="hint" id="cat-import-hint">Import stays disabled until preview succeeds without fatal conflicts.</p>
+          <p class="hint" id="cat-readonly-hint" hidden>Import commit is disabled in read-only test mode. Preview remains available.</p>
+          <button type="button" id="cat-commit" disabled>Commit import</button>
+        </div>
+
+        <div id="cat-result" class="status warn" hidden>
+          <span class="status-mark" aria-hidden="true"></span>
+          <div><p class="status-title"></p><p class="status-body"></p></div>
+        </div>
+        <button type="button" class="ghost" data-back>Back to home</button>
+      </div>
+
+      <button type="button" class="secondary" id="scanner-retry" hidden onclick="scannerAppRetry()">Retry scanner load</button>
+      <p class="footer-note">Local companion catalog · eLabFTW remains the system of record.</p>
+    </main>
+  </div>
+  <script>
+    function scannerBundleLoadFailed() {
+      document.querySelectorAll("[id$='-start-scanner']").forEach(function (btn) { btn.disabled = true; });
+      document.querySelectorAll("[id$='-scan-status']").forEach(function (el) {
+        el.className = "scan-status err";
+        el.textContent = "Camera unavailable";
+      });
+      var retry = document.getElementById("scanner-retry");
+      if (retry) retry.hidden = false;
+    }
+  </script>
+  <script src="__SCANNER_BUNDLE__" defer onerror="scannerBundleLoadFailed()"></script>
+</body>
+</html>

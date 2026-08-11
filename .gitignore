@@ -1,0 +1,22 @@
+# build artifacts
+web/dist/
+node_modules/
+*.log
+.DS_Store
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# local env / venv / db / logs
+.venv/
+.env
+*.db
+logs/
+data/
+
+# e2e artifacts
+tests/e2e/test-results/
+tests/e2e/playwright-report/

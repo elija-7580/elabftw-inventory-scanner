@@ -1,0 +1,5 @@
+Product,Manufacturer,Catalogue Number,CAS,Barcode,Alternate Codes,Category
+Example Chemical A,VendorA,CAT-A,,00012345678905,,
+Example Chemical B,VendorB,CAT-B,,4012345678901,,
+Example Chemical C,VendorC,CAT-C,,TF18912014,,
+Example Chemical D,VendorD,CAT-D,,7612345678901,,

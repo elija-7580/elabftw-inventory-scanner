@@ -1,0 +1,16 @@
+{
+  "name": "inventory-scanner-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node ../tests/js/test_scanner_core.mjs && node ../tests/js/test_scanner_ui.mjs"
+  },
+  "dependencies": {
+    "@zxing/browser": "0.1.5",
+    "@zxing/library": "0.21.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.2"
+  }
+}

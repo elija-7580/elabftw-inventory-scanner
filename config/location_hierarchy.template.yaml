@@ -1,0 +1,15 @@
+# Location hierarchy template — replace placeholders before bulk rollout.
+# Do not invent real room names in automation; operators fill this file.
+
+building: Building
+rooms:
+  - name: ROOM_PLACEHOLDER_1
+    cabinets:
+      - name: CABINET_PLACEHOLDER_1
+        shelves:
+          - SHELF_PLACEHOLDER_A
+          - SHELF_PLACEHOLDER_B
+  - name: ROOM_PLACEHOLDER_2
+    cabinets:
+      - name: CABINET_PLACEHOLDER_2
+        shelves: []
