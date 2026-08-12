@@ -19,6 +19,35 @@ Supporting features:
 - Write gate `ELAB_INTEGRATION_LIVE` (default **false**)
 - Reverse-proxy friendly under Caddy path prefix `/scanner`
 
+## Screenshots
+
+Demo UI with synthetic catalog data only (`VendorA`–`VendorD` / Example Chemical A–D). Writes disabled (`ELAB_INTEGRATION_LIVE=false`).
+
+### Mobile
+
+![Home on mobile](docs/screenshots/home-mobile.png)
+
+![Register view with scan panel on mobile](docs/screenshots/register-mobile.png)
+
+![Manage view on mobile](docs/screenshots/manage-mobile.png)
+
+![Catalog import on mobile](docs/screenshots/catalog-import-mobile.png)
+
+### Desktop
+
+<details>
+<summary>Desktop layouts (1440×900)</summary>
+
+| Home | Register |
+| --- | --- |
+| ![Home on desktop](docs/screenshots/home-desktop.png) | ![Register view with scan panel on desktop](docs/screenshots/register-desktop.png) |
+
+| Manage | Catalog import |
+| --- | --- |
+| ![Manage view on desktop](docs/screenshots/manage-desktop.png) | ![Catalog import on desktop](docs/screenshots/catalog-import-desktop.png) |
+
+</details>
+
 ## Quick start (Docker)
 
 ```bash

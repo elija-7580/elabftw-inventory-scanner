@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-08-12T10:58:11.336Z",
+  "sha256": {
+    "home-mobile.png": "2b60b9554784a35ad275ab8b5952774ebe721f66ba955fb7a4bc2f78406b4c55",
+    "home-desktop.png": "30996ec66bdf2d9797461d083bfdb8255b67eba1be0306f7fd983db950783831",
+    "register-mobile.png": "1c8ecaa4fd9e54f96b256799f55b2f5395663e8cb4a38502e5c4612049708cab",
+    "register-desktop.png": "de3edb0986ff02ed5aeb408b1e8721b93c9f66b15ee22190ff73f353f8edce24",
+    "manage-mobile.png": "9b6070249276016dd70d20888f297f4621062d61c8d3f0b0ceca7f1215856e73",
+    "manage-desktop.png": "9ea047115c3fbf5bb3fc0756c83285cd1f07c6cc6718bfdc7d5c12cd7b784294",
+    "catalog-import-mobile.png": "4f467e618d6731dbed65cf5ed9ee61a771429da517c4508c058c34623ff9ec1d",
+    "catalog-import-desktop.png": "78534788a9e4bfcb7b419533a2fc82f331a7bdd68b8ccd445ac934e114ea2157"
+  }
+}
