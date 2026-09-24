@@ -1,8 +1,21 @@
-# Inventory Scanner for eLabFTW
+# VialTrack
+
+<p align="center">
+  <img src="docs/brand/wordmark-lockup-dark.svg" alt="VialTrack" height="40" />
+</p>
+
+<p align="center">
+  <img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" />
+  <img alt="eLabFTW" src="https://img.shields.io/badge/eLabFTW-5.5.x%20API-0D9488.svg" />
+  <img alt="Status" src="https://img.shields.io/badge/status-technical%20prototype-important.svg" />
+  <img alt="Writes" src="https://img.shields.io/badge/ELAB_INTEGRATION_LIVE-default%20false-lightgrey.svg" />
+</p>
 
 Mobile-first inventory companion for **eLabFTW 5.5.x**.
 
-This project is an independent FastAPI BFF + web UI that talks to eLabFTW over its public API. It is **not** part of eLabFTW, **not** affiliated with Deltablot, and **not** a validated GxP system.
+This project is an independent FastAPI BFF + web UI that talks to eLabFTW over its public API. It is **not** part of eLabFTW, **not** affiliated with Deltablot, and **not** a validated GxP system. Formal production / GxP sign-off remains open.
+
+> Product UI brand: **VialTrack** (name-only wordmark). Configure via `BRAND_PRODUCT_NAME` / `BRAND_ACCENT_HEX`. `BRAND_ENDORSEMENT` may exist in env for other uses but is **not** shown in the header graphic.
 
 ## What it does
 
@@ -21,7 +34,7 @@ Supporting features:
 
 ## Screenshots
 
-Demo UI with synthetic catalog data only (`VendorA`–`VendorD` / Example Chemical A–D). Writes disabled (`ELAB_INTEGRATION_LIVE=false`).
+Demo UI (dark default). Writes disabled (`ELAB_INTEGRATION_LIVE=false`). Synthetic options only.
 
 ### Mobile
 
@@ -47,6 +60,8 @@ Demo UI with synthetic catalog data only (`VendorA`–`VendorD` / Example Chemic
 | ![Manage view on desktop](docs/screenshots/manage-desktop.png) | ![Catalog import on desktop](docs/screenshots/catalog-import-desktop.png) |
 
 </details>
+
+Social preview asset: [`docs/brand/social-512.png`](docs/brand/social-512.png).
 
 ## Quick start (Docker)
 

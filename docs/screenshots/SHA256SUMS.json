@@ -1,13 +1,10 @@
 {
-  "generatedAt": "2026-08-12T10:58:11.336Z",
-  "sha256": {
-    "home-mobile.png": "2b60b9554784a35ad275ab8b5952774ebe721f66ba955fb7a4bc2f78406b4c55",
-    "home-desktop.png": "30996ec66bdf2d9797461d083bfdb8255b67eba1be0306f7fd983db950783831",
-    "register-mobile.png": "1c8ecaa4fd9e54f96b256799f55b2f5395663e8cb4a38502e5c4612049708cab",
-    "register-desktop.png": "de3edb0986ff02ed5aeb408b1e8721b93c9f66b15ee22190ff73f353f8edce24",
-    "manage-mobile.png": "9b6070249276016dd70d20888f297f4621062d61c8d3f0b0ceca7f1215856e73",
-    "manage-desktop.png": "9ea047115c3fbf5bb3fc0756c83285cd1f07c6cc6718bfdc7d5c12cd7b784294",
-    "catalog-import-mobile.png": "4f467e618d6731dbed65cf5ed9ee61a771429da517c4508c058c34623ff9ec1d",
-    "catalog-import-desktop.png": "78534788a9e4bfcb7b419533a2fc82f331a7bdd68b8ccd445ac934e114ea2157"
-  }
+  "catalog-import-desktop.png": "03f1f0633af0825c7915269b6d96a675eaa00f880355ca149d5e5ebee04c79d4",
+  "catalog-import-mobile.png": "a3e9411c07e7f5b1e5b32b15bab5489774ad6f716c8d246e1de9989af2fb3be0",
+  "home-desktop.png": "a8ee3f64d165f210774f7c78df0d7ebd8d1eb612694869c8a8080066a5188c94",
+  "home-mobile.png": "70de1d32f6e0ab4f6721f0e8effdbd8a25b9a2f168d0835a7716affaf66ac57c",
+  "manage-desktop.png": "9ecedfa9da900db6682a8357a349cd1d12326d65135638a062a1af320c091da1",
+  "manage-mobile.png": "6a2e3d41d76985beeeeed05b53761715685d148006f9cea7cbc93423f3e979d4",
+  "register-desktop.png": "754c130a5e5090dc948761776442bd89a8ccc38d8997c599295d417454e45b1c",
+  "register-mobile.png": "b305c14ae8d2fa25a5903cd092ddf0584aab211aa1122b759591c968c717e3b2"
 }
