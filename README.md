@@ -6,7 +6,7 @@
 
 <p align="center">
   <img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" />
-  <img alt="eLabFTW" src="https://img.shields.io/badge/eLabFTW-5.5.x%20API-0D9488.svg" />
+  <img alt="eLabFTW" src="https://img.shields.io/badge/eLabFTW-5.5.x%20API-29ADB9.svg" />
   <img alt="Status" src="https://img.shields.io/badge/status-technical%20prototype-important.svg" />
   <img alt="Writes" src="https://img.shields.io/badge/ELAB_INTEGRATION_LIVE-default%20false-lightgrey.svg" />
 </p>
@@ -15,7 +15,7 @@ Mobile-first inventory companion for **eLabFTW 5.5.x**.
 
 This project is an independent FastAPI BFF + web UI that talks to eLabFTW over its public API. It is **not** part of eLabFTW, **not** affiliated with Deltablot, and **not** a validated GxP system. Formal production / GxP sign-off remains open.
 
-> Product UI brand: **VialTrack** (name-only wordmark). Configure via `BRAND_PRODUCT_NAME` / `BRAND_ACCENT_HEX`. `BRAND_ENDORSEMENT` may exist in env for other uses but is **not** shown in the header graphic.
+> Product UI brand: **VialTrack — by Elijá Friedrich-Ulrich** (Lato lockup). Configure via `BRAND_PRODUCT_NAME` / `BRAND_ENDORSEMENT` / `BRAND_ACCENT_HEX` (`#29ADB9`). Header/nav chrome is `#2B2B2B` in both modes. Design tokens live in `web/tokens.css` (eLabFTW-look). No brand on printed labels.
 
 ## What it does
 
@@ -23,6 +23,7 @@ Two operator workflows:
 
 1. **Register new product** — scan or enter a manufacturer code, confirm identity fields, then create eLabFTW Item + Container(s) (when live writes are enabled).
 2. **Manage existing stock** — scan an internal container QR / ID and update quantity (consume, restock, set exact, mark empty).
+3. **Print / reprint labels** — after register confirm, download PDF/PNG for each container; Manage reprints the same ID (no new container).
 
 Supporting features:
 

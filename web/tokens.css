@@ -1,0 +1,99 @@
+/* VialTrack eLabFTW-look tokens — sole source of hex for the UI.
+   Dark is default; light overrides via prefers-color-scheme.
+   Accent is interactive/focus only. Chrome/navbar is #2B2B2B in both modes.
+   Visual/branding; GxP sign-off remains open. */
+
+:root {
+  /* Core palette (dark default) */
+  --bg: #1E1E1E;
+  --surface: #131313;
+  --border: #30363D;
+  --secondary: #9AA0A6;
+  --secondary-soft: #AFAFAF;
+  --primary: #F0F6FC;
+  --chrome: #2B2B2B;
+  --white: #FFFFFF;
+  --black: #000000;
+
+  /* Accent + semantic (dark) */
+  --accent: #29ADB9;
+  --success: #81C784;
+  --warning: #F0883E;
+  --error: #E6614C;
+  --disposed: #888888;
+
+  /* Surfaces / text aliases used by existing selectors */
+  --canvas: var(--bg);
+  --surface-soft: var(--surface);
+  --surface-secondary: color-mix(in srgb, var(--surface) 70%, var(--border));
+  --surface-scan: color-mix(in srgb, var(--chrome) 85%, var(--black));
+  --text: var(--primary);
+  --text-secondary: var(--secondary);
+  --text-on-accent: var(--black);
+  --text-on-chrome: var(--primary);
+  --action: var(--primary);
+  --action-text: var(--black);
+  --info: var(--accent);
+
+  /* Scan overlay (always dark camera chrome) */
+  --scan-overlay: color-mix(in srgb, var(--primary) 70%, transparent);
+  --scan-toolbar-text: color-mix(in srgb, var(--primary) 82%, transparent);
+  --scan-meta-text: color-mix(in srgb, var(--primary) 72%, transparent);
+  --sticky-bg: color-mix(in srgb, var(--canvas) 96%, transparent);
+
+  /* Geometry (unchanged) */
+  --radius: 4px;
+  --radius-lg: 6px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --header-h: 56px;
+  --nav-h: 48px;
+  --sticky-h: 72px;
+  --touch-min: 44px;
+  --touch-primary: 56px;
+  --max-width: 960px;
+  --icon-stroke: 1.75;
+
+  /* Type — Lato UI + Space Mono for IDs/qty/units */
+  --font: "Lato", "Segoe UI", sans-serif;
+  --mono: "Space Mono", ui-monospace, Menlo, Consolas, monospace;
+  --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #F2F2F2;
+    --surface: #FFFFFF;
+    --border: #DBDBDB;
+    --secondary: #6F6F6F;
+    --secondary-soft: #6F6F6F;
+    --primary: #000000;
+    --chrome: #2B2B2B;
+
+    --success: #54AA08;
+    --warning: #FFA500;
+    --error: #82352B;
+    --disposed: #888888;
+
+    --canvas: var(--bg);
+    --surface-soft: var(--surface);
+    --surface-secondary: color-mix(in srgb, var(--bg) 70%, var(--border));
+    --surface-scan: color-mix(in srgb, var(--chrome) 85%, var(--black));
+    --text: var(--primary);
+    --text-secondary: var(--secondary);
+    --text-on-accent: var(--white);
+    --text-on-chrome: #F0F6FC;
+    --action: var(--primary);
+    --action-text: var(--white);
+
+    --scan-overlay: color-mix(in srgb, #F0F6FC 80%, transparent);
+    --scan-toolbar-text: color-mix(in srgb, #F0F6FC 82%, transparent);
+    --scan-meta-text: color-mix(in srgb, #F0F6FC 72%, transparent);
+    --sticky-bg: color-mix(in srgb, var(--white) 96%, transparent);
+  }
+}
