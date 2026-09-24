@@ -765,6 +765,126 @@ function requireRegisterPayload() {
   return payload;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function labelFormats() {
+  const fromConfig = state.config?.label_formats;
+  if (Array.isArray(fromConfig) && fromConfig.length) return fromConfig;
+  return ["square-30", "cryo-25x9", "tube-40x12"];
+}
+
+function defaultFormatForCategory(categoryId) {
+  const map = state.config?.label_format_defaults || {};
+  if (categoryId == null) return null;
+  return map[String(categoryId)] || null;
+}
+
+function formatSelectHtml(selected, selectClass) {
+  const opts = labelFormats()
+    .map((key) => {
+      const sel = key === selected ? " selected" : "";
+      return `<option value="${escapeHtml(key)}"${sel}>${escapeHtml(key)}</option>`;
+    })
+    .join("");
+  return `<select class="${selectClass}">${opts}</select>`;
+}
+
+function labelUrl(baseUrl, format, output) {
+  if (!baseUrl) return "#";
+  const sep = baseUrl.includes("?") ? "&" : "?";
+  if (output === "png") return `${baseUrl}${sep}format=${encodeURIComponent(format)}&dpi=300`;
+  return `${baseUrl}${sep}format=${encodeURIComponent(format)}`;
+}
+
+function renderRegisterLabels(containers, categoryId) {
+  const panel = $("reg-label-panel");
+  const host = $("reg-label-actions");
+  if (!panel || !host) return;
+  if (!containers || !containers.length) {
+    panel.hidden = true;
+    host.innerHTML = "";
+    return;
+  }
+  const fallback = defaultFormatForCategory(categoryId) || labelFormats()[0];
+  host.innerHTML = containers
+    .map((c, index) => {
+      const fmt = c.label_format || fallback;
+      const pdfBase = c.label_urls?.pdf || c.label_pdf_url || "";
+      const pngBase = c.label_urls?.png || c.label_png_url || "";
+      return (
+        `<div class="label-action-row" data-scanner-id="${escapeHtml(c.scanner_id || "")}">` +
+        `<p class="label-action-meta"><strong>Container ${index + 1}</strong> · eLab #${escapeHtml(c.id)}` +
+        (c.scanner_id ? ` · <span class="code-mono">${escapeHtml(c.scanner_id)}</span>` : "") +
+        `</p>` +
+        `<div class="field"><label>Format</label>${formatSelectHtml(fmt, "reg-label-format")}</div>` +
+        `<div class="label-action-buttons">` +
+        `<a class="button-link reg-label-pdf" href="${escapeHtml(labelUrl(pdfBase.split("?")[0] || pdfBase, fmt, "pdf"))}" target="_blank" rel="noopener">Download PDF</a>` +
+        `<a class="button-link secondary reg-label-png" href="${escapeHtml(labelUrl(pngBase.split("?")[0] || pngBase, fmt, "png"))}" target="_blank" rel="noopener">Download PNG</a>` +
+        `</div></div>`
+      );
+    })
+    .join("");
+  host.querySelectorAll(".label-action-row").forEach((row) => {
+    const select = row.querySelector(".reg-label-format");
+    const pdf = row.querySelector(".reg-label-pdf");
+    const png = row.querySelector(".reg-label-png");
+    const container = containers.find((c) => String(c.scanner_id) === row.getAttribute("data-scanner-id"));
+    const pdfBase = (container?.label_urls?.pdf || container?.label_pdf_url || "").split("?")[0];
+    const pngBase = (container?.label_urls?.png || container?.label_png_url || "").split("?")[0];
+    const sync = () => {
+      const fmt = select?.value || fallback;
+      if (pdf) pdf.href = labelUrl(pdfBase, fmt, "pdf");
+      if (png) png.href = labelUrl(pngBase, fmt, "png");
+    };
+    select?.addEventListener("change", sync);
+    sync();
+  });
+  panel.hidden = false;
+}
+
+function fillManageLabelPanel(data) {
+  const panel = $("mgr-label-panel");
+  if (!panel) return;
+  if (!data?.scanner_id || !data?.label_urls) {
+    panel.hidden = true;
+    return;
+  }
+  const select = $("mgr-label-format");
+  const preferred =
+    data.label_format ||
+    data.default_label_format ||
+    defaultFormatForCategory(data.category_id) ||
+    labelFormats()[0];
+  if (select) {
+    select.innerHTML = "";
+    labelFormats().forEach((key) => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = key;
+      if (key === preferred) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+  const sync = () => {
+    const fmt = select?.value || preferred;
+    const pdf = $("mgr-label-pdf");
+    const png = $("mgr-label-png");
+    if (pdf) pdf.href = labelUrl(data.label_urls.pdf, fmt, "pdf");
+    if (png) png.href = labelUrl(data.label_urls.png, fmt, "png");
+  };
+  if (select) select.onchange = sync;
+  sync();
+  const stale = $("mgr-label-stale");
+  if (stale) stale.hidden = !data.label_stale;
+  panel.hidden = false;
+}
+
 function fillManageForm(data) {
   state.loadedContainer = data;
   updateManageEmptyState();
@@ -788,23 +908,46 @@ function fillManageForm(data) {
   $("mgr-detail").hidden = false;
   $("mgr-detail").innerHTML =
     "<h3>" +
-    (data.product_name || "Container #" + data.container_id) +
+    escapeHtml(data.product_name || "Container #" + data.container_id) +
     "</h3>" +
     '<p class="meta">' +
-    (data.manufacturer || "—") +
+    escapeHtml(data.manufacturer || "—") +
     " · " +
-    (data.catalogue_number || "—") +
+    escapeHtml(data.catalogue_number || "—") +
     "</p>" +
     '<p class="meta code-mono">Container #' +
-    data.container_id +
+    escapeHtml(data.container_id) +
+    (data.scanner_id ? " · " + escapeHtml(data.scanner_id) : "") +
     "</p>" +
     '<p class="path">' +
-    (data.full_path || data.storage_name || "unknown location") +
+    escapeHtml(data.full_path || data.storage_name || "unknown location") +
     " · " +
-    data.qty_stored +
+    escapeHtml(data.qty_stored) +
     " " +
-    data.qty_unit +
+    escapeHtml(data.qty_unit) +
     "</p>";
+  fillManageLabelPanel(data);
+}
+
+function applyBranding(brand) {
+  if (!brand || typeof brand !== "object") return;
+  const name = String(brand.product_name || "").trim();
+  const endorsement = String(brand.endorsement || "").trim();
+  const accent = String(brand.accent_hex || "").trim();
+  if (name) {
+    document.title = name;
+    const title = $("brand-title");
+    if (title) title.textContent = name;
+    const lockup = $("brand-lockup");
+    const full = endorsement ? `${name} — ${endorsement}` : name;
+    if (lockup) lockup.setAttribute("aria-label", full);
+    document.querySelectorAll(".brand-wordmark").forEach((img) => {
+      img.setAttribute("alt", full);
+    });
+  }
+  if (accent) {
+    document.documentElement.style.setProperty("--accent", accent);
+  }
 }
 
 async function loadBootstrapData() {
@@ -814,6 +957,7 @@ async function loadBootstrapData() {
     state.config = { writes_enabled: false, beta: true };
     showBanner("Could not load scanner config: " + sanitizeError(err), "err");
   }
+  applyBranding(state.config?.brand);
   applyReadOnlyUi(Boolean(state.config?.writes_enabled));
   try {
     const session = await apiJson("/auth/session");
@@ -966,6 +1110,8 @@ function wireWorkflowButtons() {
 
   bindClick("reg-confirm", async () => {
     setMsg("reg-result", "", "");
+    const labelPanel = $("reg-label-panel");
+    if (labelPanel) labelPanel.hidden = true;
     try {
       const payload = requireRegisterPayload();
       const j = await apiJson("/api/register/confirm", {
@@ -976,9 +1122,10 @@ function wireWorkflowButtons() {
       const ids = (j.containers || []).map((c) => "#" + c.id).join(", ");
       setMsg(
         "reg-result",
-        "Saved item #" + j.item.id + (ids ? " and containers " + ids : ""),
+        "Saved item #" + j.item.id + (ids ? " and containers " + ids : "") + ". Print label below.",
         "ok",
       );
+      renderRegisterLabels(j.containers || [], payload.category_id);
       if ($("reg-save-catalog")?.checked) {
         try {
           await apiJson("/api/catalog/save", {
@@ -1108,6 +1255,7 @@ function wireWorkflowButtons() {
       state.loadedContainer = null;
       $("mgr-edit").hidden = true;
       $("mgr-detail").hidden = true;
+      if ($("mgr-label-panel")) $("mgr-label-panel").hidden = true;
       updateManageEmptyState();
       setMsg("mgr-result", sanitizeError(err), "err");
     }

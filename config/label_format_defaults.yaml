@@ -1,0 +1,20 @@
+# Optional default label format per resource category_id.
+# Missing / unknown category → UI offers all formats; no eLab mutation.
+# Keys must exist in label_formats.yaml.
+
+# 24: Pure Chemical → cryovial-style strip by default
+24: cryo-25x9
+# 25: Chemical Product
+25: square-30
+# 26: Commercial Mixture
+26: square-30
+# 27: Prepared Solution
+27: square-30
+# 28: Buffer
+28: square-30
+# 29: Growth Medium
+29: square-30
+# 30: Standard
+30: square-30
+# 31: General Laboratory Consumable
+31: tube-40x12

@@ -1,10 +1,10 @@
 {
-  "catalog-import-desktop.png": "03f1f0633af0825c7915269b6d96a675eaa00f880355ca149d5e5ebee04c79d4",
-  "catalog-import-mobile.png": "a3e9411c07e7f5b1e5b32b15bab5489774ad6f716c8d246e1de9989af2fb3be0",
-  "home-desktop.png": "a8ee3f64d165f210774f7c78df0d7ebd8d1eb612694869c8a8080066a5188c94",
-  "home-mobile.png": "70de1d32f6e0ab4f6721f0e8effdbd8a25b9a2f168d0835a7716affaf66ac57c",
-  "manage-desktop.png": "9ecedfa9da900db6682a8357a349cd1d12326d65135638a062a1af320c091da1",
-  "manage-mobile.png": "6a2e3d41d76985beeeeed05b53761715685d148006f9cea7cbc93423f3e979d4",
-  "register-desktop.png": "754c130a5e5090dc948761776442bd89a8ccc38d8997c599295d417454e45b1c",
-  "register-mobile.png": "b305c14ae8d2fa25a5903cd092ddf0584aab211aa1122b759591c968c717e3b2"
+  "catalog-import-desktop.png": "3576be8dafc5625fdabd6a4ffb1f3d700e9989e19a6cd6966f1513fb743881a7",
+  "catalog-import-mobile.png": "914d5d673f093212311d41b7efbdb648f226a4b01e43843cd3bc9fd738696874",
+  "home-desktop.png": "3576be8dafc5625fdabd6a4ffb1f3d700e9989e19a6cd6966f1513fb743881a7",
+  "home-mobile.png": "71f73f8756ff99d12f702372251358906cd5c29b4044a0ce881ba7c7b1bb944d",
+  "manage-desktop.png": "2616179af413754516fc4e10b875bb4e212eccb2e6ddaee69dd309c6ef4ecf5a",
+  "manage-mobile.png": "de81afc28fee2a23b6a8f3d53cf6b69fb05a96fe04d10b9294a0c4d704103898",
+  "register-desktop.png": "2616179af413754516fc4e10b875bb4e212eccb2e6ddaee69dd309c6ef4ecf5a",
+  "register-mobile.png": "639edd4974476885cd1e37964f903db9e5d54bfe230991f3f9aca1e653c7fba0"
 }
