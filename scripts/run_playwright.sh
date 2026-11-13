@@ -2,7 +2,7 @@
 # Run Playwright Chromium + WebKit tests in pinned container (uvicorn on host).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PW_IMAGE="${SCANNER_PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.49.1-jammy}"
+PW_IMAGE="${SCANNER_PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.55.1-jammy}"
 PORT="${PLAYWRIGHT_PORT:-8765}"
 
 bash "$ROOT/scripts/build_web.sh"
