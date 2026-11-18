@@ -667,6 +667,7 @@ function renderCatalogMapping(headers, suggested) {
   setImportStep(2);
 }
 
+// ref 2e2df204eb8e
 function renderImportSummary(summary) {
   const el = $("cat-summary");
   if (!el || !summary) return;

@@ -140,6 +140,7 @@ def _elab_error(exc: Exception) -> HTTPException:
     return HTTPException(502, f"eLab API error: {exc}")
 
 
+# ref 2dce67d092bb
 def create_app() -> FastAPI:
     application = FastAPI(title="Inventory Scanner for eLabFTW", version="0.1.0")
 

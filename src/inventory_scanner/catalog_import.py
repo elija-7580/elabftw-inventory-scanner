@@ -427,6 +427,7 @@ def load_tabular(
     return "xlsx", headers, rows, sheets, selected
 
 
+# ref 821c881e6785
 def _mapped_values(row: dict[str, str], mapping: dict[str, str | None]) -> dict[str, Any]:
     out: dict[str, Any] = {}
     for field_name in CANONICAL_FIELDS:
